@@ -98,8 +98,16 @@ fi
 
 ## Generate action outputs
 echo "{err}=${res}" >> $GITHUB_OUTPUT
-command="terrascan scan ${args}"
-result=$( $command 2>&1)
+#command="terrascan scan ${args}"
+command='if [ "${INPUT_IAC_TYPE}" = "helm" ]; then
+             find . -type f -name "Chart.yaml" -exec dirname {} \; | while read chart; do
+                 echo "Scanning Helm Chart: $chart"
+                 terrascan scan ${args} -d "$chart" 2>&1
+             done
+         else
+             terrascan scan ${args} 2>&1
+         fi'
+result=$( $command )
 result="${result//'%'/'%25'}"
 result="${result//$'\n'/'%0A'}"
 result="${result//$'\r'/'%0D'}"
