@@ -120,15 +120,16 @@ echo "terrascan scan ${args}"
 if [ "${INPUT_IAC_TYPE}" = "helm" ]; then
     find . -type f -name "Chart.yaml" -exec dirname {} \; | while read chart; do
         echo "Scanning Helm Chart: $chart"
-        terrascan scan ${args} -d "$chart" --log-output-dir $(pwd)
-        ls -l $(pwd)
+        terrascan scan ${args} -d "$chart" --log-output-dir "$chart"
         res=$?
+        cat "$chart/scan-result.txt" >> $GITHUB_STEP_SUMMARY
     done
 else
     terrascan scan ${args} --log-output-dir $(pwd)
     res=$?
 fi
-cat scan-result.txt >> $GITHUB_STEP_SUMMARY
+
+#cat scan-result.txt >> $GITHUB_STEP_SUMMARY
 
 
 if [ "x${INPUT_SARIF_UPLOAD}" != "x" ]; then
