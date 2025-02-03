@@ -118,7 +118,7 @@ if [ "${INPUT_IAC_TYPE}" = "helm" ]; then
 else
     terrascan scan ${args} --log-output-dir $(pwd)
     res=$?
-fires=$?
+fi
 cat scan-result.txt >> $GITHUB_STEP_SUMMARY
 
 
