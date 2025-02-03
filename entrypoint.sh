@@ -52,7 +52,7 @@ echo "REF_NAME=${REF_NAME}"
 
 # Creating arguments for terrascan
 args=""
-if [ "x${INPUT_IAC_DIR}" != "x" ]; then
+if [ "x${INPUT_IAC_DIR}" != "x" ] && [ "${INPUT_IAC_TYPE}" != "helm"  ]; then
     args="${args} -d ${INPUT_IAC_DIR}"
 fi
 if [ "x${INPUT_IAC_TYPE}" != "x" ]; then
@@ -99,14 +99,7 @@ fi
 ## Generate action outputs
 echo "{err}=${res}" >> $GITHUB_OUTPUT
 #command="terrascan scan ${args}"
-command='if [ "${INPUT_IAC_TYPE}" = "helm" ]; then
-             find . -type f -name "Chart.yaml" -exec dirname {} \; | while read chart; do
-                 echo "Scanning Helm Chart: $chart"
-                 terrascan scan ${args} -d "$chart" 2>&1
-             done
-         else
-             terrascan scan ${args} 2>&1
-         fi'
+command="terrascan scan ${args}"
 result=$( $command )
 result="${result//'%'/'%25'}"
 result="${result//$'\n'/'%0A'}"
@@ -119,10 +112,12 @@ echo "Executing terrascan as follows:"
 echo "terrascan scan ${args}"
 if [ "${INPUT_IAC_TYPE}" = "helm" ]; then
     find . -type f -name "Chart.yaml" -exec dirname {} \; | while read chart; do
-        echo "Scanning Helm Chart: $chart"
+        echo "### Scanning Helm Chart: $chart" >> $GITHUB_STEP_SUMMARY
+        echo "\`terrascan scan ${args} -d $chart\`" >> $GITHUB_STEP_SUMMARY
         terrascan scan ${args} -d "$chart" --log-output-dir "$chart"
         res=$?
         cat "$chart/scan-result.txt" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
     done
 else
     terrascan scan ${args} --log-output-dir $(pwd)
