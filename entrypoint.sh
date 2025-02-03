@@ -109,8 +109,16 @@ echo "{result}=${result}" >> $GITHUB_OUTPUT
 #Executing terrascan
 echo "Executing terrascan as follows:"
 echo "terrascan scan ${args}"
-terrascan scan ${args} --log-output-dir $(pwd)
-res=$?
+if [ "${INPUT_IAC_TYPE}" = "helm" ]; then
+    find . -type f -name "Chart.yaml" -exec dirname {} \; | while read chart; do
+        echo "Scanning Helm Chart: $chart"
+        terrascan scan ${args} -d "$chart" --log-output-dir $(pwd)
+        res=$?
+    done
+else
+    terrascan scan ${args} --log-output-dir $(pwd)
+    res=$?
+fires=$?
 cat scan-result.txt >> $GITHUB_STEP_SUMMARY
 
 
