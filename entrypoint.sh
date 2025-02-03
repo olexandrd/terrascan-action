@@ -121,6 +121,7 @@ if [ "${INPUT_IAC_TYPE}" = "helm" ]; then
     find . -type f -name "Chart.yaml" -exec dirname {} \; | while read chart; do
         echo "Scanning Helm Chart: $chart"
         terrascan scan ${args} -d "$chart" --log-output-dir $(pwd)
+        ls -l $(pwd)
         res=$?
     done
 else
