@@ -71,7 +71,7 @@ if [ "x${INPUT_POLICY_TYPE}" != "x" ]; then
     args="${args} -t ${INPUT_POLICY_TYPE}"
 fi
 if [ "x${INPUT_SKIP_RULES}" != "x" ]; then
-    args="${args} --skip-rules=\'${INPUT_SKIP_RULES}\'"
+    args="${args} --skip-rules='${INPUT_SKIP_RULES}'"
 fi
 if [ "x${INPUT_CONFIG_PATH}" != "x" ]; then
     args="${args} -c ${INPUT_CONFIG_PATH}"
@@ -96,9 +96,12 @@ if [ "x${REPO_URL}" != "x" ]; then
     args="${args} --repo-ref ${REF_NAME}"
 fi
 
+if [ -f ".terrascanrc.toml" ]; then
+    args="${args} -c .terrascanrc.toml"
+fi
+
 ## Generate action outputs
 echo "{err}=${res}" >> $GITHUB_OUTPUT
-#command="terrascan scan ${args}"
 command="terrascan scan ${args}"
 result=$( $command )
 result="${result//'%'/'%25'}"
