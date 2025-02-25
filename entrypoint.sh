@@ -71,7 +71,7 @@ if [ "x${INPUT_POLICY_TYPE}" != "x" ]; then
     args="${args} -t ${INPUT_POLICY_TYPE}"
 fi
 if [ "x${INPUT_SKIP_RULES}" != "x" ]; then
-    args="${args} --skip-rules='${INPUT_SKIP_RULES}'"
+    args="${args} --skip-rules=\'${INPUT_SKIP_RULES}\'"
 fi
 if [ "x${INPUT_CONFIG_PATH}" != "x" ]; then
     args="${args} -c ${INPUT_CONFIG_PATH}"
