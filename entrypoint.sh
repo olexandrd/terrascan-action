@@ -96,9 +96,12 @@ if [ "x${REPO_URL}" != "x" ]; then
     args="${args} --repo-ref ${REF_NAME}"
 fi
 
+if [ -f ".terrascanrc.toml" ]; then
+    args="${args} -c .terrascanrc.toml"
+fi
+
 ## Generate action outputs
 echo "{err}=${res}" >> $GITHUB_OUTPUT
-#command="terrascan scan ${args}"
 command="terrascan scan ${args}"
 result=$( $command )
 result="${result//'%'/'%25'}"
